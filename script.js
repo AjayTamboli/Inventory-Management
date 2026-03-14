@@ -910,6 +910,21 @@ function setQrStatus(message, tone = "info") {
 	qrStatus.style.color = tone === "error" ? "#b91c1c" : tone === "success" ? "#166534" : "";
 }
 
+function parseQrQuantityValue(rawValue) {
+	if (typeof rawValue === "number") {
+		return Number.isFinite(rawValue) ? rawValue : NaN;
+	}
+	if (typeof rawValue !== "string") {
+		return NaN;
+	}
+	const value = rawValue.trim();
+	if (!value) return NaN;
+	const direct = Number(value);
+	if (Number.isFinite(direct)) return direct;
+	const match = value.match(/-?\d+(?:\.\d+)?/);
+	return match ? Number(match[0]) : NaN;
+}
+
 function parseYarnQrText(rawText) {
 	const value = String(rawText || "").trim();
 	if (!value) return null;
@@ -926,13 +941,25 @@ function parseYarnQrText(rawText) {
 			: parsed.data && typeof parsed.data === "object"
 				? parsed.data
 				: parsed;
+		const quantityRaw =
+			container.quantity
+			?? container.qty
+			?? container.quantityKg
+			?? container.quantity_kg
+			?? container.qtyKg
+			?? container.qty_kg
+			?? container.weight
+			?? container.netWeight
+			?? container.net_weight
+			?? container.Quantity
+			?? container.QTY;
 		return {
 			count: String(container.count ?? "").trim(),
 			twist: String(container.twist ?? "").trim(),
 			blend: String(container.blend ?? "").trim(),
 			lot_number: String(container.lot_number ?? container.lotNumber ?? container.lot ?? "").trim(),
 			supplier: String(container.supplier ?? "").trim(),
-			quantity: Number(container.quantity),
+			quantity: parseQrQuantityValue(quantityRaw),
 		};
 	} catch (_error) {
 		return null;
