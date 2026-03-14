@@ -1,0 +1,37 @@
+[
+  {
+    "id": "1773498193373-j5o2of",
+    "action": "CREATE",
+    "module": "Weaver Performance",
+    "details": "Logged 24 meters for KKK",
+    "timestamp": "2026-03-14T14:23:13.373Z"
+  },
+  {
+    "id": "1773498102642-o9uwu3",
+    "action": "CREATE",
+    "module": "Weaver Performance",
+    "details": "Logged 145 meters for Ramesh",
+    "timestamp": "2026-03-14T14:21:42.642Z"
+  },
+  {
+    "id": "1773497863524-vwbd4q",
+    "action": "DELETE",
+    "module": "Inventory",
+    "details": "Deleted a",
+    "timestamp": "2026-03-14T14:17:43.524Z"
+  },
+  {
+    "id": "1773497817668-t401rr",
+    "action": "CREATE",
+    "module": "Stock Movement",
+    "details": "OUT 5 kg for Cotton 40s",
+    "timestamp": "2026-03-14T14:16:57.668Z"
+  },
+  {
+    "id": "1773497817561-ixzvdn",
+    "action": "CREATE",
+    "module": "Purchase Planning",
+    "details": "Plan created for Polyester Blend 30s (80 kg)",
+    "timestamp": "2026-03-14T14:16:57.561Z"
+  }
+]

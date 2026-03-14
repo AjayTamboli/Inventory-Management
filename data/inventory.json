@@ -1,0 +1,56 @@
+[
+  {
+    "id": "inv-1001",
+    "type": "Cotton 40s",
+    "qty": 115,
+    "unitCost": 320,
+    "reorderLevel": 40,
+    "createdAt": "2026-03-14T09:00:00.000Z",
+    "updatedAt": "2026-03-14T14:16:57.660Z"
+  },
+  {
+    "id": "inv-1002",
+    "type": "Polyester Blend 30s",
+    "qty": 24,
+    "unitCost": 250,
+    "reorderLevel": 25,
+    "createdAt": "2026-03-14T09:10:00.000Z",
+    "updatedAt": "2026-03-14T14:07:06.672Z"
+  },
+  {
+    "id": "inv-1003",
+    "type": "Linen Premium",
+    "qty": 55,
+    "unitCost": 480,
+    "reorderLevel": 20,
+    "createdAt": "2026-03-14T09:20:00.000Z",
+    "updatedAt": "2026-03-14T09:20:00.000Z"
+  },
+  {
+    "id": "inv-1004",
+    "type": "Silk Fine 20D",
+    "qty": 12,
+    "unitCost": 920,
+    "reorderLevel": 15,
+    "createdAt": "2026-03-14T09:30:00.000Z",
+    "updatedAt": "2026-03-14T09:30:00.000Z"
+  },
+  {
+    "id": "inv-1005",
+    "type": "Denim Warp Yarn",
+    "qty": 210,
+    "unitCost": 290,
+    "reorderLevel": 80,
+    "createdAt": "2026-03-14T09:40:00.000Z",
+    "updatedAt": "2026-03-14T09:40:00.000Z"
+  },
+  {
+    "id": "inv-1006",
+    "type": "Viscose 34s",
+    "qty": 30,
+    "unitCost": 340,
+    "reorderLevel": 30,
+    "createdAt": "2026-03-14T09:50:00.000Z",
+    "updatedAt": "2026-03-14T09:50:00.000Z"
+  }
+]
