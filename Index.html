@@ -10,10 +10,10 @@
 <body>
 
 <aside class="sidebar">
-<h2>Textile Tracker</h2>
+<h2>Textile Inventory Tracker</h2>
 <ul>
-<li class="active" data-section="inventory">Dashboard</li>
-<li data-section="inventory">Add Yarn Stock</li>
+<li class="active" data-section="dashboard">Dashboard</li>
+<li data-section="inventory">Add Yarn Stock / Inventory</li>
 <li data-section="weaver">Add Weaver Production</li>
 <li data-section="purchase">Update Batch Status</li>
 <li data-section="audit">Reports & Logs</li>
@@ -34,7 +34,7 @@
 </section>
 
 <header class="header">
-<h1>Yarn Inventory Management</h1>
+<h1>Textile Inventory Analytics Dashboard</h1>
 <p>Last updated: <span id="lastUpdated">-</span></p>
 </header>
 
@@ -46,6 +46,9 @@
 <button type="button" class="flow-step" data-flow="reports">5. View Reports / Graphs</button>
 </section>
 
+<section class="forms module-section active" id="section-dashboard">
+<div class="form-card">
+
 <section class="cards" id="summaryCards" aria-label="Inventory KPIs">
 <article class="card">
 <h3>Total SKUs</h3>
@@ -53,7 +56,7 @@
 </article>
 
 <article class="card">
-<h3>Total Quantity</h3>
+<h3>Total Yarn Stock (kg)</h3>
 <p id="totalQuantity">0 kg</p>
 </article>
 
@@ -63,14 +66,66 @@
 </article>
 
 <article class="card">
-<h3>Inventory Value</h3>
+<h3>Total Inventory Value</h3>
 <p id="totalValue">₹0</p>
+</article>
+
+<article class="card">
+<h3>Total Suppliers</h3>
+<p id="totalSuppliers">0</p>
 </article>
 </section>
 
-<section class="forms module-section active" id="section-inventory">
+<h3>Yarn Inventory Share</h3>
+<div id="yarnInventoryPieChart" class="yarn-pie-chart" aria-label="Yarn inventory pie chart"></div>
+<div id="yarnInventoryPieLegend" class="yarn-pie-legend"></div>
+<p id="yarnInventoryPieEmpty" class="empty-state">No yarn summary data available for pie chart.</p>
+
+<div class="visual-panels">
+<article class="panel-card">
+<div class="panel-head">
+<h3>Production Trend Graph</h3>
+<p>Top weavers by total meters</p>
+</div>
+<div id="productionGraph" class="production-graph"></div>
+<p id="productionGraphEmpty" class="empty-state">No production data available for graph.</p>
+</article>
+
+<article class="panel-card">
+<div class="panel-head">
+<h3>Batch Progress Overview</h3>
+<p>Purchase plan status progression</p>
+</div>
+<div id="batchProgressList" class="batch-progress-list"></div>
+<p id="batchProgressEmpty" class="empty-state">No purchase plans available for progress tracking.</p>
+</article>
+
+<article class="panel-card recent-activity-card">
+<div class="panel-head">
+<h3>Recent Inventory Activity</h3>
+<p>Latest actions across inventory modules</p>
+</div>
+<table id="recentActivityTable">
+<thead>
+<tr>
+<th>Time</th>
+<th>Module</th>
+<th>Action</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody id="recentActivityTableBody"></tbody>
+</table>
+<p id="recentActivityEmptyState" class="empty-state">No recent inventory activity available.</p>
+</article>
+</div>
+
+</div>
+</section>
+
+<section class="forms module-section" id="section-inventory">
 <div class="form-card inventory-card">
-<h2>Yarn Inventory</h2>
+<h2>Add Yarn Stock / Inventory</h2>
 
 <div class="legacy-inventory-ui" aria-hidden="true">
 
@@ -148,7 +203,7 @@
 
 <p id="yarnQrEmptyState" class="empty-state">No yarn inventory records added yet.</p>
 
-<h3>Yarn Inventory Summary (Auto Calculated)</h3>
+<h3>Top Yarn Types by Quantity</h3>
 
 <div class="toolbar">
 <input id="searchInput" placeholder="Search by yarn type...">
@@ -165,26 +220,6 @@
 <button type="button" id="resetFiltersBtn" class="secondary">Reset Filters</button>
 <button type="button" id="exportCsvBtn">Export CSV</button>
 <button type="button" id="exportJsonBtn">Export PDF Report</button>
-</div>
-
-<div class="visual-panels">
-<article class="panel-card">
-<div class="panel-head">
-<h3>Production Graph</h3>
-<p>Top weavers by total meters</p>
-</div>
-<div id="productionGraph" class="production-graph"></div>
-<p id="productionGraphEmpty" class="empty-state">No production data available for graph.</p>
-</article>
-
-<article class="panel-card">
-<div class="panel-head">
-<h3>Batch Progress Bar</h3>
-<p>Purchase plan status progression</p>
-</div>
-<div id="batchProgressList" class="batch-progress-list"></div>
-<p id="batchProgressEmpty" class="empty-state">No purchase plans available for progress tracking.</p>
-</article>
 </div>
 
 <div class="table-scroll-wrap" aria-label="Yarn inventory summary table scroll container">

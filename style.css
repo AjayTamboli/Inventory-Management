@@ -466,6 +466,10 @@ gap:14px;
 margin:10px 0 12px;
 }
 
+.visual-panels .recent-activity-card{
+grid-column:1 / -1;
+}
+
 .yarn-qr-section{
 display:grid;
 grid-template-columns:1fr 1fr;
@@ -614,6 +618,49 @@ border-radius:999px;
 font-size:12px;
 font-weight:800;
 color:#334155;
+}
+
+.yarn-pie-chart{
+width:180px;
+height:180px;
+border-radius:999px;
+margin:4px auto 12px;
+border:1px solid #dbeafe;
+box-shadow:inset 0 0 0 10px #ffffff;
+background:#f1f5f9;
+}
+
+.yarn-pie-legend{
+display:grid;
+gap:6px;
+}
+
+.yarn-pie-legend-row{
+display:grid;
+grid-template-columns:12px 1fr auto;
+align-items:center;
+gap:8px;
+font-size:12px;
+}
+
+.yarn-pie-dot{
+width:10px;
+height:10px;
+border-radius:999px;
+display:inline-block;
+}
+
+.yarn-pie-label{
+font-weight:700;
+color:#334155;
+overflow:hidden;
+text-overflow:ellipsis;
+white-space:nowrap;
+}
+
+.yarn-pie-value{
+font-weight:800;
+color:#1e293b;
 }
 
 .form-error{

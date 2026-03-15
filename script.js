@@ -35,6 +35,9 @@ const productionGraph = document.getElementById("productionGraph");
 const productionGraphEmpty = document.getElementById("productionGraphEmpty");
 const batchProgressList = document.getElementById("batchProgressList");
 const batchProgressEmpty = document.getElementById("batchProgressEmpty");
+const yarnInventoryPieChart = document.getElementById("yarnInventoryPieChart");
+const yarnInventoryPieLegend = document.getElementById("yarnInventoryPieLegend");
+const yarnInventoryPieEmpty = document.getElementById("yarnInventoryPieEmpty");
 
 const purchaseForm = document.getElementById("purchaseForm");
 const purchaseTableBody = document.querySelector("#purchaseTable tbody");
@@ -53,11 +56,14 @@ const weaverEmptyState = document.getElementById("weaverEmptyState");
 
 const auditTableBody = document.querySelector("#auditTable tbody");
 const auditEmptyState = document.getElementById("auditEmptyState");
+const recentActivityTableBody = document.getElementById("recentActivityTableBody");
+const recentActivityEmptyState = document.getElementById("recentActivityEmptyState");
 
 const totalSkus = document.getElementById("totalSkus");
 const totalQuantity = document.getElementById("totalQuantity");
 const lowStockCount = document.getElementById("lowStockCount");
 const totalValue = document.getElementById("totalValue");
+const totalSuppliers = document.getElementById("totalSuppliers");
 const lastUpdated = document.getElementById("lastUpdated");
 const refreshAllBtn = document.getElementById("refreshAllBtn");
 const toastContainer = document.getElementById("toastContainer");
@@ -80,6 +86,7 @@ let movements = [];
 let weaverPerformance = [];
 let auditLogs = [];
 let yarnQrInventory = [];
+let inventoryForChart = [];
 let editingId = null;
 let sortState = { key: "firstAddedAt", direction: "asc" };
 let searchDebounce;
@@ -524,6 +531,63 @@ function renderBatchProgress() {
 	});
 }
 
+function renderYarnInventoryPieChart() {
+	if (!yarnInventoryPieChart || !yarnInventoryPieLegend || !yarnInventoryPieEmpty) return;
+	yarnInventoryPieLegend.innerHTML = "";
+	const rows = inventoryForChart
+		.filter((item) => Number(item.qty || 0) > 0)
+		.sort((first, second) => Number(second.qty || 0) - Number(first.qty || 0))
+		.slice(0, 6);
+
+	if (!rows.length) {
+		yarnInventoryPieChart.style.background = "none";
+		yarnInventoryPieEmpty.style.display = "block";
+		return;
+	}
+
+	yarnInventoryPieEmpty.style.display = "none";
+	const totalQty = rows.reduce((sum, item) => sum + Number(item.qty || 0), 0) || 1;
+	const rootStyle = getComputedStyle(document.documentElement);
+	const primary = rootStyle.getPropertyValue("--primary").trim() || "#2563eb";
+	const accent = rootStyle.getPropertyValue("--accent").trim() || "#06b6d4";
+	const palette = [primary, accent, "#1d4ed8", "#0ea5e9", "#16a34a", "#f59e0b"];
+
+	let start = 0;
+	const segments = rows.map((item, index) => {
+		const fraction = Number(item.qty || 0) / totalQty;
+		const sweep = fraction * 360;
+		const end = start + sweep;
+		const color = palette[index % palette.length];
+		const segment = `${color} ${start.toFixed(2)}deg ${end.toFixed(2)}deg`;
+		start = end;
+		return { item, color, segment, share: fraction * 100 };
+	});
+
+	yarnInventoryPieChart.style.background = `conic-gradient(${segments.map((part) => part.segment).join(", ")})`;
+
+	segments.forEach((part) => {
+		const legendRow = document.createElement("div");
+		legendRow.className = "yarn-pie-legend-row";
+
+		const marker = document.createElement("span");
+		marker.className = "yarn-pie-dot";
+		marker.style.background = part.color;
+
+		const label = document.createElement("span");
+		label.className = "yarn-pie-label";
+		label.textContent = part.item.type;
+
+		const value = document.createElement("span");
+		value.className = "yarn-pie-value";
+		value.textContent = `${Number(part.item.qty || 0)} kg (${part.share.toFixed(1)}%)`;
+
+		legendRow.appendChild(marker);
+		legendRow.appendChild(label);
+		legendRow.appendChild(value);
+		yarnInventoryPieLegend.appendChild(legendRow);
+	});
+}
+
 function renderPurchaseTable() {
 	purchaseTableBody.innerHTML = "";
 	purchasePlans.forEach((plan) => {
@@ -606,11 +670,33 @@ function renderAuditTable() {
 	auditEmptyState.style.display = auditLogs.length ? "none" : "block";
 }
 
+function renderRecentInventoryActivity() {
+	if (!recentActivityTableBody || !recentActivityEmptyState) return;
+	recentActivityTableBody.innerHTML = "";
+	const recentLogs = auditLogs.slice(0, 8);
+	recentLogs.forEach((log) => {
+		const row = recentActivityTableBody.insertRow();
+		row.insertCell(0).textContent = formatDateTime(log.timestamp);
+		row.insertCell(1).textContent = log.module;
+		row.insertCell(2).textContent = log.action;
+		row.insertCell(3).textContent = log.details;
+	});
+	recentActivityEmptyState.style.display = recentLogs.length ? "none" : "block";
+}
+
 function renderKpis(kpis) {
 	totalSkus.textContent = String(kpis.totalSkus ?? 0);
 	totalQuantity.textContent = `${kpis.totalQuantity ?? 0} kg`;
 	lowStockCount.textContent = String(kpis.lowStockCount ?? 0);
 	totalValue.textContent = formatCurrency(kpis.totalValue ?? 0);
+	if (totalSuppliers) {
+		const uniqueSuppliers = new Set(
+			yarnQrInventory
+				.map((item) => String(item.supplier || "").trim().toLowerCase())
+				.filter(Boolean)
+		);
+		totalSuppliers.textContent = String(uniqueSuppliers.size);
+	}
 }
 
 function buildEntryCountMap() {
@@ -630,6 +716,10 @@ async function loadInventoryFromApi() {
 	const result = await apiRequest("/api/yarn-inventory-summary");
 	const allSummary = Array.isArray(result.data) ? result.data : [];
 	const countMap = buildEntryCountMap();
+	inventoryForChart = allSummary.map((item) => {
+		const key = String(item.type || "").trim().toLowerCase();
+		return { ...item, entryCount: countMap.get(key) || 0 };
+	});
 
 	const query = searchInput.value.trim().toLowerCase();
 	const stock = stockFilter.value;
@@ -671,6 +761,7 @@ async function loadInventoryFromApi() {
 
 	renderKpis(result.kpis || {});
 	renderInventoryTable();
+	renderYarnInventoryPieChart();
 }
 
 async function loadPurchasePlans() {
@@ -695,6 +786,7 @@ async function loadAuditLogs() {
 	const result = await apiRequest("/api/audit-logs?limit=150");
 	auditLogs = Array.isArray(result.data) ? result.data : [];
 	renderAuditTable();
+	renderRecentInventoryActivity();
 }
 
 async function loadYarnQrInventory() {
@@ -852,7 +944,7 @@ function scrollToElement(element) {
 function handleFlowNavigation(step) {
 	highlightFlowStep(step);
 	if (step === "summary") {
-		activateSection("inventory");
+		activateSection("dashboard");
 		scrollToElement(summaryCards);
 		return;
 	}
@@ -873,7 +965,7 @@ function handleFlowNavigation(step) {
 		return;
 	}
 	if (step === "reports") {
-		activateSection("inventory");
+		activateSection("dashboard");
 		scrollToElement(document.querySelector(".visual-panels"));
 	}
 }
